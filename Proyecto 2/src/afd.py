@@ -6,18 +6,22 @@ from models.token import Token
 
 # recibe un string, retorna lista de tokens y errores
 def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
-
+    numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
       # Agregar char al final
+    alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+                ,"ñ", "Ñ",
+                "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
     tokens: List[Token] = []  # Lista tokens
     errores: List[ErrorEntry] = []  # Lista errores
     estado: int = 1  # Estado inicial
     lexema: str = ''  # lexema actual
     index: int = 0  # indice
-
+    counter = 2
     row: int = 1  # fila
     col: int = 0  # columna
     print("El Archivo>>")
     print(str(len(input)))
+    input += '𝓼'
     while index < len(input):
         char = input[index]
 
@@ -55,75 +59,77 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 col += 1
                 lexema += char
 
-            elif char.upper() == 'G':
-                estado = 56
+            elif char == 'G':
+                estado = 57
                 index += 1
                 col += 1
                 lexema += char
 
-            elif char.upper() == 'L':
-                estado = 56
+            elif char   == 'L':
+                estado = 61
                 index += 1
                 col += 1
                 lexema += char
-            elif char.upper() == 'P':
-                estado = 56
+            elif char   == 'P':
+                estado = 66
                 index += 1
                 col += 1
                 lexema += char
-            elif char.upper() == 'S':
-                estado = 56
+            elif char   == 'S':
+                estado = 72
                 index += 1
                 col += 1
                 lexema += char
-            elif char.upper() == 'I':
-                estado = 56
+            elif char   == 'I':
+                estado = 79
                 index += 1
                 col += 1
                 lexema += char
-            elif char.upper() == 'A':
-                estado = 56
+            elif char   == 'A':
+                estado = 86
                 index += 1
                 col += 1
                 lexema += char
 
 
-            elif char == "~":
-                estado = 31
-                index += 1
-                col += 1
-                lexema += char
+
 
             elif char == "[":
                 col += 1
-                estado = 37
-                index += 1
+                estado = 1
                 lexema += char
+                tokens.append(Token('LLAVEABRIR',lexema, row, col))
+                index += 1
+                lexema = ''
+
             elif char == "]":
-                estado = 37
+                estado = 1
                 index += 1
-                col += 1
                 lexema += char
+                tokens.append(Token('LLAVEABRIR', lexema, row, col))
+                col += 1
+                lexema = ''
 
 
-            elif char == ":":
-                estado = 37
-                index += 1
-                col += 1
-                lexema += char
+
+
 
             elif char == "<":
-                estado = 37
+                estado = 1
                 index += 1
                 col += 1
                 lexema += char
+                tokens.append(Token('MENORQUE', lexema, row, col))
+                lexema = ''
             elif char == '>':
-                estado = 37
+                estado = 1
                 index += 1
                 col += 1
                 lexema += char
+                tokens.append(Token('MAYORQUE', lexema, row, col))
+                lexema = ''
             elif char == '"':
-                estado = 34
+                estado = 92
                 index += 1
                 col += 1
 
@@ -134,6 +140,26 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 lexema += char
                 tokens.append(Token('COMA', lexema, row, col))
                 lexema = ''
+            elif char in numbers:
+                if input[index+1] == ' ' or input[index+1] == '𝓼' or input[index+1]=='\t' or input[index+1] == '\n':
+                    estado = 1
+                    index += 1
+                    col += 1
+                    lexema += char
+                    tokens.append(Token('INTEGER', lexema, row, col))
+                    lexema = ''
+                else:
+                    estado = 93
+                    index += 1
+                    col += 1
+                    lexema += char
+                    counter = 2
+
+            elif char in alphabet:
+                estado = 94
+                lexema += char
+                index += 1
+
 
 
 
@@ -151,6 +177,11 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
             elif char == ' ':
                 col += 1
                 index += 1
+            elif char == '𝓼':
+                index+=1
+                print("Analisis Lexico Terminado")
+                tokens.append(Token('<<EOF>>', '<<EOF>>', row, col))
+
             #Si ninguno de los caracteres anteriores hace presencia, es un error lexico
             else:
                 errores.append(ErrorEntry(row, col, char))
@@ -262,6 +293,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 lexema += char
                 tokens.append(Token('RESULTADO', lexema, row, col))
                 lexema = ''
+                index += 1
 
 
             else:
@@ -375,6 +407,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 index += 1
                 lexema += char
                 tokens.append(Token('TEMPORADA', lexema, row, col))
+                lexema = ''
 
 
             else:
@@ -386,7 +419,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
 
 
         elif estado == 18:
-            if char.upper() == 'S':
+            if char   == 'S':
                 estado = 1
 
                 index += 1
@@ -484,23 +517,30 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 lexema = ''
 
         elif estado == 25:
-            if char.upper() == 'F':
+            if char   == 'f':
 
                 index += 1
                 lexema += char
                 tokens.append(Token('GUIONF', lexema, row, col))
                 lexema = ''
                 estado = 1
-            elif char.upper() == 'J':
+            elif char   == 'j':
                 estado = 26
                 index += 1
                 lexema += char
-            elif char.upper() == 'N':
+            elif char   == 'n':
                 estado = 1
                 index += 1
                 lexema += char
                 tokens.append(Token('GUIONN', lexema, row, col))
                 lexema = ''
+            elif char == ' ' or char == '\t' or char == '\n' or char in numbers:
+                tokens.append(Token('GUION', lexema, row, col))
+                lexema = ''
+
+                estado = 1
+
+
             else:
                 errores.append(ErrorEntry(row, col, char))
                 index += 1
@@ -508,13 +548,13 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 lexema = ''
                 col += 1
         elif estado == 26:
-            if char.upper() == 'I':
+            if char   == 'i':
                 estado = 1
                 index += 1
                 lexema += char
                 tokens.append(Token('GUIONJI', lexema, row, col))
                 lexema = ''
-            elif char.upper() == 'F':
+            elif char   == 'f':
                 estado = 1
                 index += 1
                 lexema += char
@@ -532,7 +572,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
 
 
         elif estado == 27:
-            if char.upper() == 'I':
+            if char   == 'I':
                 estado = 29
                 index += 1
                 lexema += char
@@ -543,7 +583,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 29:
-            if char.upper() == 'P':
+            if char   == 'P':
                 estado = 30
                 index += 1
                 lexema += char
@@ -554,7 +594,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 col += 1
         elif estado == 28:
-            if char.upper() == 'S':
+            if char   == 'S':
                 estado = 29
                 index += 1
                 lexema += char
@@ -566,7 +606,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 col += 1
 
         elif estado == 29:
-            if char.upper() == 'I':
+            if char   == 'I':
                 estado = 30
                 index += 1
                 lexema += char
@@ -578,7 +618,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 col += 1
 
         elif estado == 30:
-            if char.upper() == 'T':
+            if char   == 'T':
                 estado = 31
                 index += 1
                 lexema += char
@@ -589,7 +629,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 col += 1
         elif estado == 31:
-            if char.upper() == 'A':
+            if char   == 'A':
                 estado = 32
                 index += 1
                 lexema += char
@@ -601,7 +641,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 col += 1
 
         elif estado == 32:
-            if char.upper() == 'N':
+            if char   == 'N':
                 estado = 33
                 index += 1
                 lexema += char
@@ -612,7 +652,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 col += 1
         elif estado == 33:
-            if char.upper() == 'T':
+            if char   == 'T':
                 estado = 34
                 index += 1
                 lexema += char
@@ -623,7 +663,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 col += 1
         elif estado == 34:
-            if char.upper() == 'E':
+            if char   == 'E':
                 estado = 1
                 index += 1
                 lexema += char
@@ -637,7 +677,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 col += 1
 
         elif estado == 38:
-            if char.upper() == 'O':
+            if char   == 'O':
                 lexema += char
                 index += 1
                 col += 1
@@ -666,7 +706,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 41:
-            if char.upper() == 'A':
+            if char   == 'A':
                 lexema += char
                 index += 1
                 col += 1
@@ -678,7 +718,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 42:
-            if char.upper() == 'L':
+            if char   == 'L':
                 lexema += char
                 index += 1
                 col += 1
@@ -692,7 +732,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 44:
-            if char.upper() == 'B':
+            if char   == 'B':
                 lexema += char
                 index += 1
                 col += 1
@@ -704,7 +744,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 45:
-            if char.upper() == 'L':
+            if char   == 'L':
                 lexema += char
                 index += 1
                 col += 1
@@ -716,11 +756,14 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 46:
-            if char.upper() == 'A':
+            if char   == 'A':
                 lexema += char
                 index += 1
                 col += 1
-                estado = 47
+                estado = 1
+                tokens.append(Token('TABLA', lexema, row, col))
+                lexema = ''
+
             else:
                 errores.append(ErrorEntry(row, col, char))
                 index += 1
@@ -728,11 +771,11 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 47:
-            if char.upper() == '\n':
+            if char   == '\n':
                 index += 1
                 col = 0
                 row += 1
-            elif char.upper() == '\t':
+            elif char   == '\t':
                 index += 1
                 col += 1
             elif char == ' ':
@@ -751,7 +794,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 48:
-            if char.upper() == 'E':
+            if char   == 'E':
                 lexema += char
                 index += 1
                 col += 1
@@ -763,7 +806,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 49:
-            if char.upper() == 'M':
+            if char   == 'M':
                 lexema += char
                 index += 1
                 col += 1
@@ -775,7 +818,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 50:
-            if char.upper() == 'P':
+            if char   == 'P':
                 lexema += char
                 index += 1
                 col += 1
@@ -787,7 +830,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 51:
-            if char.upper() == 'O':
+            if char   == 'O':
                 lexema += char
                 index += 1
                 col += 1
@@ -799,7 +842,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 52:
-            if char.upper() == 'R':
+            if char   == 'R':
                 lexema += char
                 index += 1
                 col += 1
@@ -811,7 +854,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 53:
-            if char.upper() == 'A':
+            if char   == 'A':
                 lexema += char
                 index += 1
                 col += 1
@@ -823,7 +866,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 54:
-            if char.upper() == 'D':
+            if char   == 'D':
                 lexema += char
                 index += 1
                 col += 1
@@ -835,7 +878,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 55:
-            if char.upper() == 'A':
+            if char   == 'A':
                 lexema += char
                 index += 1
                 col += 1
@@ -850,7 +893,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 lexema = ''
 
         elif estado == 56:
-            if char.upper() == 'A':
+            if char   == 'A':
                 lexema += char
                 index += 1
                 col += 1
@@ -864,7 +907,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 57:
-            if char.upper() == 'O':
+            if char   == 'O':
                 lexema += char
                 index += 1
                 col += 1
@@ -876,7 +919,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 58:
-            if char.upper() == 'L':
+            if char   == 'L':
                 lexema += char
                 index += 1
                 col += 1
@@ -888,7 +931,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 59:
-            if char.upper() == 'E':
+            if char   == 'E':
                 lexema += char
                 index += 1
                 col += 1
@@ -900,11 +943,13 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 60:
-            if char.upper() == 'S':
+            if char   == 'S':
                 lexema += char
                 index += 1
                 col += 1
                 tokens.append(Token('GOLES', lexema, row, col))
+                lexema = ''
+                estado = 1
 
             else:
                 errores.append(ErrorEntry(row, col, char))
@@ -913,11 +958,11 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 61:
-            if char.upper() == 'O':
+            if char   == 'O':
                 lexema += char
                 index += 1
                 col += 1
-                estado = 62
+                estado = 63
 
             else:
                 errores.append(ErrorEntry(row, col, char))
@@ -926,7 +971,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 62:
-            if char.upper() == 'O':
+            if char   == 'O':
                 lexema += char
                 index += 1
                 col += 1
@@ -939,7 +984,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 63:
-            if char.upper() == 'C':
+            if char   == 'C':
                 lexema += char
                 index += 1
                 col += 1
@@ -952,7 +997,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 64:
-            if char.upper() == 'A':
+            if char   == 'A':
                 lexema += char
                 index += 1
                 col += 1
@@ -965,11 +1010,11 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 65:
-            if char.upper() == 'L':
+            if char   == 'L':
                 lexema += char
                 index += 1
                 col += 1
-                tokens.append(Token('COMA', lexema, row, col))
+                tokens.append(Token('LOCAL', lexema, row, col))
                 lexema = ''
                 estado = 1
 
@@ -982,7 +1027,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 lexema = ''
 
         elif estado == 66:
-            if char.upper() == 'A':
+            if char   == 'A':
                 lexema += char
                 index += 1
                 col += 1
@@ -996,7 +1041,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 67:
-            if char.upper() == 'R':
+            if char   == 'R':
                 lexema += char
                 index += 1
                 col += 1
@@ -1010,7 +1055,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 68:
-            if char.upper() == 'T':
+            if char == 'T':
                 lexema += char
                 index += 1
                 col += 1
@@ -1024,7 +1069,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 69:
-            if char.upper() == 'I':
+            if char == 'I':
                 lexema += char
                 index += 1
                 col += 1
@@ -1038,11 +1083,17 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 70:
-            if char.upper() == 'D':
+            if char   == 'D':
+                lexema += char
+                index += 1
+                col += 1
+                estado = 70
+            elif char == 'O':
                 lexema += char
                 index += 1
                 col += 1
                 estado = 71
+
 
 
             else:
@@ -1052,7 +1103,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 71:
-            if char.upper() == 'S':
+            if char == 'S':
                 lexema += char
                 index += 1
                 tokens.append(Token('PARTIDOS', lexema, row, col))
@@ -1068,7 +1119,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 72:
-            if char.upper() == 'U':
+            if char   == 'U':
                 lexema += char
                 index += 1
                 estado = 73
@@ -1082,7 +1133,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 73:
-            if char.upper() == 'P':
+            if char   == 'P':
                 lexema += char
                 index += 1
                 estado = 74
@@ -1096,7 +1147,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 74:
-            if char.upper() == 'E':
+            if char   == 'E':
                 lexema += char
                 index += 1
                 estado = 75
@@ -1110,7 +1161,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 75:
-            if char.upper() == 'R':
+            if char   == 'R':
                 lexema += char
                 index += 1
                 estado = 76
@@ -1124,7 +1175,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 76:
-            if char.upper() == 'I':
+            if char   == 'I':
                 lexema += char
                 index += 1
                 estado = 77
@@ -1138,7 +1189,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 77:
-            if char.upper() == 'O':
+            if char   == 'O':
                 lexema += char
                 index += 1
                 estado = 78
@@ -1152,7 +1203,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 78:
-            if char.upper() == 'R':
+            if char   == 'R':
                 lexema += char
                 index += 1
                 tokens.append(Token('SUPERIOR', lexema, row, col))
@@ -1170,7 +1221,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 lexema = ''
 
         elif estado == 79:
-            if char.upper() == 'N':
+            if char   == 'N':
                 lexema += char
                 index += 1
 
@@ -1186,7 +1237,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 80:
-            if char.upper() == 'F':
+            if char   == 'F':
                 lexema += char
                 index += 1
 
@@ -1199,7 +1250,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 81:
-            if char.upper() == 'E':
+            if char   == 'E':
                 lexema += char
                 index += 1
 
@@ -1212,7 +1263,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 82:
-            if char.upper() == 'R':
+            if char   == 'R':
                 lexema += char
                 index += 1
 
@@ -1225,7 +1276,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 83:
-            if char.upper() == 'I':
+            if char   == 'I':
                 lexema += char
                 index += 1
 
@@ -1238,7 +1289,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 84:
-            if char.upper() == 'O':
+            if char   == 'O':
                 lexema += char
                 index += 1
 
@@ -1251,7 +1302,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 85:
-            if char.upper() == 'R':
+            if char   == 'R':
                 lexema += char
                 index += 1
                 tokens.append(Token('INFERIOR', lexema, row, col))
@@ -1266,7 +1317,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 86:
-            if char.upper() == 'D':
+            if char   == 'D':
                 lexema += char
                 index += 1
 
@@ -1279,7 +1330,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 87:
-            if char.upper() == 'I':
+            if char   == 'I':
                 lexema += char
                 index += 1
 
@@ -1292,7 +1343,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 88:
-            if char.upper() == 'O':
+            if char   == 'O':
                 lexema += char
                 index += 1
 
@@ -1305,7 +1356,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 estado = 1
                 lexema = ''
         elif estado == 89:
-            if char.upper() == 'S':
+            if char   == 'S':
                 lexema += char
                 index += 1
 
@@ -1321,6 +1372,83 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 col += 1
                 estado = 1
                 lexema = ''
+        elif estado == 90:
+            if char   == 'S':
+                lexema += char
+                index += 1
+
+
+                tokens.append(Token('ADIOS', lexema, row, col))
+                lexema = ''
+                estado = 1
+                estado = 1
+
+            else:
+                errores.append(ErrorEntry(row, col, char))
+                index += 1
+                col += 1
+                estado = 1
+                lexema = ''
+        elif estado == 92:
+            if char == '"':
+                estado = 1
+                tokens.append(Token('STRING', lexema.replace('"', ''), row, col))
+                index += 1
+                lexema = ''
+            else:
+                lexema += char
+                index += 1
+        elif estado == 93:
+
+
+            if char in numbers:
+
+                lexema += char
+                index += 1
+                if counter == 2 and input[index] == ' ' or input[index]=='T':
+                    tokens.append(Token('INTEGER', lexema, row, col))
+                    lexema = ''
+                    estado = 1
+                elif counter == 4:
+                    tokens.append(Token('YEAR', lexema, row, col))
+                    lexema = ''
+                    estado = 1
+
+
+                counter += 1
+
+        elif estado == 94:
+            if char in alphabet:
+                lexema += char
+                index += 1
+
+
+            elif char == '_':
+                lexema += char
+                index += 1
+            elif char in numbers:
+                lexema += char
+                index += 1
+            elif char == '\n' or char ==' ' or char == '\t':
+                tokens.append(Token('ARCHIVO', lexema, row, col))
+                lexema = ''
+                index += 1
+            elif char == ']':
+                tokens.append(Token('LLAVECERRAR', lexema, row, col))
+                lexema = ''
+                index += 1
+            else:
+                errores.append(ErrorEntry(row, col, char))
+                index += 1
+                col += 1
+                estado = 1
+                lexema = ''
+
+
+
+
+
+
 
 
 

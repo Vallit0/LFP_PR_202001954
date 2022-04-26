@@ -3,3 +3,4 @@ class ErrorEntry:
         self.linea: int = linea
         self.col: int = col
         self.char: str = char
+        self.type: str = 'Lexico'

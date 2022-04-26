@@ -4,6 +4,7 @@ from models.token import Token
 from typing import List, Tuple
 from models.element import Element
 from os import startfile
+from tkinter import filedialog as fd
 from datetime import datetime
 
 def process_file(tokens: List[Token], errs: List[ErrorEntry]):
@@ -77,7 +78,94 @@ def process_file(tokens: List[Token], errs: List[ErrorEntry]):
         if i == len(tokens):
             errsTable += ''' </tbody></table>'''
     return tokenTable, errsTable
-def verifyOrder(tokens: List[Token]):
+
+def processTokenTable(tokens: List[Token]):
+    balance: list[int] = []
+    i = 0
+    tokenTable = '''
+        <!DOCTYPE html>
+        <head> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"></head>
+        <title>Reporte de Productos</title>
+        <meta charset="UTF-8">
+        <h1><p class="text-center">Reporte de Tokens</p></h1>
+        <h2><p class="text-center">Estuardo Sebastian Valle Bances</p></h2>
+        <h3><p class="text-center">202001954</p></h3>
+
+            <table class="table table-dark table-striped">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Token</th>
+              <th scope="col">Column</th>
+              <th scope="col">Row</th>
+              <th scope="col">Tipo</th>
+            </tr>
+            </thead>
+              <tbody>
+              '''
+
+    for token in tokens:
+        i += 1
+        tokenTable += ''' <tr>
+                      <th scope="row">''' + str(i) + '''</th>
+                      <td>''' + str(token.lexema) + '''</td>
+                      <td>''' + str(token.col) + '''</td>
+                      <td>''' + str(token.fila) + '''</td>
+                      <td>''' + str(token.token) + '''</td>
+                    </tr>'''
+
+        if i == len(tokens):
+            tokenTable += ''' </tbody></table>'''
+    tableTokens = open('ReporteTokens.html', 'w')
+    tableTokens.write(tokenTable)
+    startfile('ReporteTokens.html')
+    tableTokens.close()
+    return tokenTable
+
+def processErrsTable(errs: List[ErrorEntry]):
+    #Stating the variables
+    i = 0
+
+    errsTable = '''
+            <!DOCTYPE html>
+            <head> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"></head>
+            <title>Reporte de Productos</title>
+            <meta charset="UTF-8">
+            <h1><p class="text-center">Reporte de Errores</p></h1>
+            <h2><p class="text-center">Estuardo Sebastian Valle Bances</p></h2>
+            <h3><p class="text-center">202001954</p></h3>
+
+                <table class="table table-dark table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Error</th>
+                  <th scope="col">Column</th>
+                  <th scope="col">Row</th>
+                </tr>
+                </thead>
+                  <tbody>
+                  '''
+
+    for error in errs:
+        i += 1
+        errsTable += ''' <tr>
+                      <th scope="row">''' + str(i) + '''</th>
+                      <td>''' + str(error.char) + '''</td>
+                      <td>''' + str(error.col) + '''</td>
+                      <td>''' + str(error.linea) + '''</td>
+                    </tr>'''
+
+        if i == len(errs):
+            errsTable += ''' </tbody></table>'''
+
+
+
+    tableErrors = open('ReporteErrores.html', 'w')
+    tableErrors.write(errsTable)
+    startfile('ReporteErrores.html')
+    tableErrors.close()
+
     pass
 def analyzeFile(tokens: List[Token]):
     elements = []
@@ -455,6 +543,35 @@ def generateForms(elements: List[Element]):
     file.write(htmlForms)
     file.close()
     startfile('Frame.html')
+
+
+def processCSV():
+    
+    filename = fd.askopenfilename(title="Select file", filetypes=(("CSV", "*.csv"), ("All", "*.txt")))
+    filereader = open(filename, 'r+', encoding='utf-8')
+    current_file = filereader.read()
+    # Debemos iniciar la lectura del archivo que se indicó
+    def leerArchivo(ruta):
+        file = open(ruta, 'r')
+        contenido = file.read()
+        return contenido
+
+    ligainfo = leerArchivo(filename)
+    partidos = ligainfo.split('\n')
+    objPartidos = []
+    for partido in partidos:
+        datos = partido.split(',')
+        p = {
+            'fecha': datos[0],
+            'temporada': datos[1],
+            'jornada': datos[2],
+            'local': datos[3],
+            'visitante': datos[4],
+            'goleslocal': datos[5],
+            'golesvisitante': datos[6],
+        }
+        objPartidos.append(p)
+    return True, objPartidos
 
 
 
