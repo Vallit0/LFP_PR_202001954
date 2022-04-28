@@ -27,7 +27,6 @@ class AnalizadorSintactico:
                 return self.bloqueResultado()
             elif token.token == 'JORNADA':
                  return self.bloqueJornada()
-
             elif token.token == 'GOLES':
                 return self.bloqueGoles()
             elif token.token == 'TOP':
