@@ -121,6 +121,145 @@ def processTokenTable(tokens: List[Token]):
     startfile('ReporteTokens.html')
     tableTokens.close()
     return tokenTable
+def matchDayGraph(partidos: list, matchDay, name, temporada):
+    i = 0
+    tokenTable = '''
+            <!DOCTYPE html>
+            <head> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"></head>
+            <title>REPORTE DE JORNADA''' + str(matchDay)+'''</title>
+            <meta charset="UTF-8">
+            <h1><p class="text-center">Reporte de Jornada ''' + str(matchDay)+'''</p></h1>
+            <h2><p class="text-center">La Liga '''+ str(temporada)+'''</p></h2>
+            <h3><p class="text-center">Estuardo Sebastian Valle Bances</p></h3>
+            <h3><p class="text-center">202001954</p></h3>
+
+                <table class="table table-dark table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Equipo Local</th>
+                  <th scope="col">Goles Equipo Local</th>
+                  <th scope="col">Equipo Visitante</th>
+                  <th scope="col">Goles Equipo Visitante</th>
+                  <th scope="col">Fecha</th>
+                </tr>
+                </thead>
+                  <tbody>
+                  '''
+    for partido in partidos:
+        i += 1
+        tokenTable += ''' <tr>
+                      <th scope="row">''' + str(i) + '''</th>
+                      <td>''' + str(partido['local']) + '''</td>
+                      <td>''' + str(partido['goleslocal']) + '''</td>
+                      <td>''' + str(partido['visitante']) + '''</td>
+                      <td>''' + str(partido['golesvisitante']) + '''</td>
+                      <td>''' + str(partido['fecha']) + '''</td>
+                    </tr>'''
+
+        if i == len(partidos):
+            tokenTable += ''' </tbody></table>'''
+    fileName = name + '.html'
+    tableMatchDay = open(fileName, 'w')
+    tableMatchDay.write(tokenTable)
+    startfile(fileName)
+    tableMatchDay.close()
+
+def seasonStatsGraph(partidos: list, equipo, name, temporada):
+    i = 0
+    tokenTable = '''
+            <!DOCTYPE html>
+            <head> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"></head>
+            <title>REPORTE DE EQUIPO''' + str(equipo)+'''</title>
+            <meta charset="UTF-8">
+            <h1><p class="text-center">Reporte de Equipo ''' + str(equipo)+'''</p></h1>
+            <h2><p class="text-center">La Liga '''+ str(temporada)+'''</p></h2>
+            <h3><p class="text-center">Estuardo Sebastian Valle Bances</p></h3>
+            <h3><p class="text-center">202001954</p></h3>
+
+                <table class="table table-dark table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Local</th>
+                  <th scope="col">Goles</th>
+                  <th scope="col">Equipo Visitante</th>
+                  <th scope="col">Goles Equipo Visitante</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Jornada</th>
+                  
+                </tr>
+                </thead>
+                  <tbody>
+                  '''
+    for partido in partidos:
+        i += 1
+        tokenTable += ''' <tr>
+                      <th scope="row">''' + str(i) + '''</th>
+                      <td>''' + str(partido['local']) + '''</td>
+                      <td>''' + str(partido['goleslocal']) + '''</td>
+                      <td>''' + str(partido['visitante']) + '''</td>
+                      <td>''' + str(partido['golesvisitante']) + '''</td>
+                      <td>''' + str(partido['fecha']) + '''</td>
+                      <td>''' + str(partido['jornada']) + '''</td>
+                    </tr>'''
+
+        if i == len(partidos):
+            tokenTable += ''' </tbody></table>'''
+    if name == None:
+        name = 'partidos'
+    fileName = name + '.html'
+    tableMatchDay = open(fileName, 'w')
+    tableMatchDay.write(tokenTable)
+    startfile(fileName)
+    tableMatchDay.close()
+
+def seasonGraph(teamStats: list, nombre, temporada):
+    i = 0
+    tokenTable = '''
+            <!DOCTYPE html>
+            <head> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"></head>
+            <title>REPORTE DE TEMPORADA''' + str(temporada)+'''</title>
+            <meta charset="UTF-8">
+            <h1><p class="text-center">Reporte de Temporada ''' + str(temporada)+'''</p></h1>
+            <h2><p class="text-center">La Liga '''+ str(temporada)+'''</p></h2>
+            <h3><p class="text-center">Estuardo Sebastian Valle Bances</p></h3>
+            <h3><p class="text-center">202001954</p></h3>
+
+                <table class="table table-dark table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Equipo</th>
+                  <th scope="col">Puntos</th>
+                  <th scope="col">Goles</th>
+                  <th scope="col">Perdidas</th>
+                  <th scope="col">Victorias</th>
+                  <th scope="col">Empates</th>
+                  
+                </tr>
+                </thead>
+                  <tbody>
+                  '''
+    for team in teamStats:
+        i += 1
+        tokenTable += ''' <tr>
+                      <th scope="row">''' + str(i) + '''</th>
+                      <td>''' + str(team.name) + '''</td>
+                      <td>''' + str(team.puntos) + '''</td>
+                      <td>''' + str(team.goles) + '''</td>
+                      <td>''' + str(team.perdidas) + '''</td>
+                      <td>''' + str(team.victorias) + '''</td>
+                      <td>''' + str(team.empates) + '''</td>
+                      </tr>'''
+
+        if i == len(teamStats):
+            tokenTable += ''' </tbody></table>'''
+    fileName = nombre + '.html'
+    tableSeason = open(fileName, 'w')
+    tableSeason.write(tokenTable)
+    startfile(fileName)
+    tableSeason.close()
 
 def processErrsTable(errs: List[ErrorEntry]):
     #Stating the variables
@@ -142,6 +281,9 @@ def processErrsTable(errs: List[ErrorEntry]):
                   <th scope="col">Error</th>
                   <th scope="col">Column</th>
                   <th scope="col">Row</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Token</th>
+                  <th scope="col">Razon</th>
                 </tr>
                 </thead>
                   <tbody>
@@ -154,6 +296,9 @@ def processErrsTable(errs: List[ErrorEntry]):
                       <td>''' + str(error.char) + '''</td>
                       <td>''' + str(error.col) + '''</td>
                       <td>''' + str(error.linea) + '''</td>
+                      <td>''' + str(error.type) + '''</td>
+                      <td>''' + str(error.token) + '''</td>
+                      <td>''' + str(error.razon) + '''</td>
                     </tr>'''
 
         if i == len(errs):

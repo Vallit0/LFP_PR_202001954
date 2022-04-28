@@ -21,7 +21,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
     col: int = 0  # columna
     print("El Archivo>>")
     print(str(len(input)))
-    input += '𝓼'
+    input += '*'
     while index < len(input):
         char = input[index]
 
@@ -141,12 +141,18 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 tokens.append(Token('COMA', lexema, row, col))
                 lexema = ''
             elif char in numbers:
-                if input[index+1] == ' ' or input[index+1] == '𝓼' or input[index+1]=='\t' or input[index+1] == '\n':
+                if input[index+1] == ' ' or input[index+1] == '*' or input[index+1]=='\t' or input[index+1] == '\n':
                     estado = 1
                     index += 1
                     col += 1
                     lexema += char
                     tokens.append(Token('INTEGER', lexema, row, col))
+                    lexema = ''
+                elif input[index + 1] in alphabet:
+                    errores.append(ErrorEntry(row, col, char))
+                    index += 1
+                    col += 1
+                    estado = 1
                     lexema = ''
                 else:
                     estado = 93
@@ -155,10 +161,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                     lexema += char
                     counter = 2
 
-            elif char in alphabet:
-                estado = 94
-                lexema += char
-                index += 1
+
 
 
 
@@ -177,7 +180,11 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
             elif char == ' ':
                 col += 1
                 index += 1
-            elif char == '𝓼':
+            elif char in alphabet:
+                estado = 94
+                lexema += char
+                index += 1
+            elif char == '*':
                 index+=1
                 print("Analisis Lexico Terminado")
                 tokens.append(Token('<<EOF>>', '<<EOF>>', row, col))
@@ -517,7 +524,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 lexema = ''
 
         elif estado == 25:
-            if char   == 'f':
+            if char  == 'f':
 
                 index += 1
                 lexema += char
@@ -548,13 +555,13 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 lexema = ''
                 col += 1
         elif estado == 26:
-            if char   == 'i':
+            if char == 'i':
                 estado = 1
                 index += 1
                 lexema += char
                 tokens.append(Token('GUIONJI', lexema, row, col))
                 lexema = ''
-            elif char   == 'f':
+            elif char  == 'f':
                 estado = 1
                 index += 1
                 lexema += char
@@ -1433,6 +1440,7 @@ def automata(input: str) -> Tuple[Tuple[Token], Tuple[ErrorEntry]]:
                 tokens.append(Token('ARCHIVO', lexema, row, col))
                 lexema = ''
                 index += 1
+                estado = 1
             elif char == ']':
                 tokens.append(Token('LLAVECERRAR', lexema, row, col))
                 lexema = ''

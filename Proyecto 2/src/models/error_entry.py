@@ -4,3 +4,5 @@ class ErrorEntry:
         self.col: int = col
         self.char: str = char
         self.type: str = 'Lexico'
+        self.token: str = 'STRING'
+        self.razon: str = 'No pertenece al Lenguaje'

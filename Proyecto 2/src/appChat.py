@@ -2,6 +2,7 @@ from tkinter import *
 from chat import get_response
 from os import startfile
 from helpers import process_file, processErrsTable, processTokenTable, processCSV
+from syntaxis import AnalizadorSintactico
 from afd import automata
 bots = ['Fernando Palomo', 'MessiBOT',
         'Maradona (Desde el cielito)', 'NeyBOT', 'Mario Kempes', 'El de Chiringuito',
@@ -176,7 +177,10 @@ class ChatApplication:
         self.errList.extend(errs)
 
         #Se anade el analisis sintactico
-        msg2 = f"{bot_name}: {get_response(msg)}\n\n"
+        sintaxis = AnalizadorSintactico()
+        answer, syntaxErrs = sintaxis.analizar(tokens, errs, self.objects)
+        self.errList.extend(syntaxErrs)
+        msg2 = f"{bot_name}: {answer}\n\n"
         self.text_widget.configure(state=NORMAL)
         self.text_widget.insert(END, msg2)
         self.text_widget.configure(state=DISABLED)
